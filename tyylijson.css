@@ -53,11 +53,18 @@ body {
     text-align: left;
   }
 }
+/* Keskitetään sisältö */
+#vastaus {
+  text-align: center;   /* keskittää tekstin ja kuvat vaakasuunnassa */
+  margin: 0 auto;       /* varmistaa että elementti itsessään on keskellä */
+  max-width: 800px;     /* rajoittaa sisällön leveyttä, ettei veny liian leveäksi */
+  padding: 20px;
+}
 .responsiivinen-kuva {
   max-width: 600px;
   height: auto;
   display: block;
-  margin: 10px 0;
+  margin: 10px auto;
   border-radius: 6px;
 }
 
