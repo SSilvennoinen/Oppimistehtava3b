@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>Säätilat</title>
+  <link rel="stylesheet" href="tyylijson.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <!-- Sama navipalkki kuin index.html -->
+  <div class="topnav" id="myTopnav">
+    <a href="index.html">Tapahtumat</a>
+    <a href="saa.html" class="active">Sää</a>
+    <a href="liikennekamera.html">Liikennekamerat</a>
+    <a href="junat.html">Junat</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+  </div>
+
+  <h1>Sää - siitä aina on jotain kerrottavaa</h1> 
+  <p>Millainen sää Helsingissä on? Entä Tampereella?</p>
+  <div id="vastaus"></div>
+
+  <script>
+    // Haetaan Helsingin sää
+    fetch('https://api.openweathermap.org/data/2.5/weather?lang=fi&q=Helsinki&units=metric&APPID=665ecd56dfc08dbb50feb8b8f5034e28')
+      .then(response => response.json())
+      .then(responseJson => saa(responseJson))
+      .catch(error => {
+        document.getElementById("vastaus").innerHTML +=
+          "<p>Helsingin tietoa ei pystytä hakemaan</p>";
+      });
+
+    // Haetaan Tampereen sää
+    fetch('https://api.openweathermap.org/data/2.5/weather?lang=fi&q=Tampere&units=metric&APPID=665ecd56dfc08dbb50feb8b8f5034e28')
+      .then(response => response.json())
+      .then(responseJson => saa(responseJson))
+      .catch(error => {
+        document.getElementById("vastaus").innerHTML +=
+          "<p>Tampereen tietoa ei pystytä hakemaan</p>";
+      });
+
+    // Funktio joka käsittelee säädatan
+    function saa(data) {
+      let teksti = "";
+
+      teksti += "<h2>" + data.name + "</h2>";
+      teksti += "<p><strong>Sää:</strong> " + data.weather[0].description + "</p>";
+      teksti += "<p><strong>Lämpötila:</strong> " + data.main.temp + " &deg;C</p>";
+      teksti += "<p><strong>Tuulen nopeus:</strong> " + data.wind.speed + " m/s</p>";
+
+      let kuva = "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
+      teksti += "<p><img src='" + kuva + "' alt='Sääkuva' class='responsiivinen-kuva'></p>";
+
+      teksti += "<hr>";
+
+      document.getElementById("vastaus").innerHTML += teksti;
+    }
+
+    // Navigaation responsiivisuus
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+  </script>
+</body>
+</html>

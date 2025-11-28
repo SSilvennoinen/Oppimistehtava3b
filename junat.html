@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>Junat</title>
+  <link rel="stylesheet" href="tyylijson.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <!-- Navipalkki -->
+  <div class="topnav" id="myTopnav">
+    <a href="index.html">Tapahtumat</a>
+    <a href="saa.html">Sää</a>
+    <a href="liikennekamera.html">Liikennekamerat</a>
+    <a href="junat.html" class="active">Junat</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+  </div>
+
+  <h1>Mennäänkö junalla Tampereelle?</h1>
+  <p>Kuinkahan usein junia menee?</p>
+  <div id="vastaus"></div>
+
+  <script>
+    // Haetaan junadata Helsingistä lähtevistä junista
+    fetch('https://rata.digitraffic.fi/api/v1/live-trains/station/HKI?departing_trains=100&include_nonstopping=false')
+      .then(response => response.json())
+      .then(responseJson => junat(responseJson))
+      .catch(error => {
+        document.getElementById("vastaus").innerHTML =
+          "<p>Junatietoa ei pystytä hakemaan</p>";
+      });
+
+    function junat(data) {
+      let teksti = "";
+      for (let i = 0; i < data.length; i++) {
+        // Käydään läpi aikataulurivit
+        for (let j = 0; j < data[i].timeTableRows.length; j++) {
+          if (data[i].timeTableRows[j].stationShortCode == "TPE" &&
+              data[i].timeTableRows[j].type == "DEPARTURE" &&
+              data[i].trainCategory == "Long-distance") {
+
+            let lahtoasema = data[i].timeTableRows[0].stationShortCode;
+            let vika = data[i].timeTableRows.length - 1;
+            let maaranpaa = data[i].timeTableRows[vika].stationShortCode;
+
+            let pvm = data[i].timeTableRows[j].scheduledTime;
+            let aika = pvm.substr(0, 10) + " kello: " + pvm.substr(11,5);
+
+            teksti += "<h3>Juna " + data[i].trainNumber + "</h3>";
+            teksti += "<p><strong>Lähtö:</strong> " + lahtoasema + "</p>";
+            teksti += "<p><strong>Määränpää:</strong> " + maaranpaa + "</p>";
+            teksti += "<p><strong>Aika:</strong> " + aika + "</p>";
+            teksti += "<hr>";
+          }
+        }
+      }
+      document.getElementById("vastaus").innerHTML = teksti;
+    }
+
+    // Navin responsiivisuus
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+  </script>
+</body>
+</html>

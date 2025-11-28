@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tampereen matka</title>
+  <link rel="stylesheet" href="tyylijson.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="topnav" id="myTopnav">
+    <a href="index.html" class="active">Tapahtumat</a>
+    <a href="saa.html">Sää</a>
+    <a href="liikennekamera.html">Liikennekamerat</a>
+    <a href="junat.html">Junat</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+  </div>
+
+  <h1>Tampereen tapahtumat</h1>
+  <div id="vastaus"></div>
+
+  <script>
+    // Haetaan tapahtumat rajapinnasta
+    fetch('https://api.visittampere.com/api/v1/visittampere/event/published/all/?format=json&lang=fi')
+      .then(response => response.json())
+      .then(responseJson => kerro(responseJson))
+      .catch(error => {
+        document.getElementById("vastaus").innerHTML =
+          "<p>Tietoa ei pystytä hakemaan </p>" + error;
+      });
+
+  function kerro(data) {
+  let tekstit = "";
+
+  for (let i = 0; i < data.length; i++) {
+    const tapahtuma = data[i];
+
+    // Otsikko
+    tekstit += "<h3>" + (tapahtuma.title || "Nimetön tapahtuma") + "</h3>";
+
+    // Kuvaus
+    tekstit += "<p>" + (tapahtuma.description || "Ei kuvausta saatavilla") + "</p>";
+
+    // Linkki
+    tekstit += "<p><a href='" + tapahtuma.url + "' target='_blank'>Lisätietoja tapahtumasta</a></p>";
+
+    // Kuva (jos saatavilla)
+    if (tapahtuma.images && tapahtuma.images.length > 0) {
+      tekstit += "<img src='" + tapahtuma.images[0].url + "' alt='Tapahtumakuva' class='responsiivinen-kuva'><br>";
+    }
+
+    // Ajankohdat
+    if (tapahtuma.dates && tapahtuma.dates.length > 0) {
+      tekstit += "<p><strong>Ajankohdat:</strong><ul>";
+      for (let j = 0; j < tapahtuma.dates.length; j++) {
+        const alku = new Date(tapahtuma.dates[j].start_time).toLocaleString("fi-FI");
+        const loppu = new Date(tapahtuma.dates[j].end_time).toLocaleString("fi-FI");
+        tekstit += "<li>" + alku + " – " + loppu + "</li>";
+      }
+      tekstit += "</ul></p>";
+    }
+
+    // Kategoriat
+    if (tapahtuma.categories && tapahtuma.categories.length > 0) {
+      tekstit += "<p><strong>Kategoriat:</strong> ";
+      tekstit += tapahtuma.categories.map(k => k.name).join(", ");
+      tekstit += "</p>";
+    }
+
+    tekstit += "<hr>";
+  }
+
+  document.getElementById("vastaus").innerHTML = tekstit;
+}
+
+    // Navigaation responsiivisuus
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+  </script>
+</body>
+</html>

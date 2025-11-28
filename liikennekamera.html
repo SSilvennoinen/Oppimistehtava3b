@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>Liikennekamerat</title>
+  <link rel="stylesheet" href="tyylijson.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <!-- Navipalkki -->
+  <div class="topnav" id="myTopnav">
+    <a href="index.html">Tapahtumat</a>
+    <a href="saa.html">Sää</a>
+    <a href="liikennekamera.html" class="active">Liikennekamerat</a>
+    <a href="junat.html">Junat</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+  </div>
+
+  <h1>Autolla Tampereelle</h1>
+  <p>Minkälainen keli siellä on?</p>
+  <div id="vastaus"></div>
+
+  <script>
+    // Haetaan kameradata yhdeltä asemalta (esim. C04507)
+    fetch('https://tie.digitraffic.fi/api/weathercam/v1/stations/C04507/data')
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(responseJson) {
+        tulosta(responseJson);
+      })
+      .catch(function(error) {
+        document.getElementById("vastaus").innerHTML =
+          "<p>Ei pystytty hakemaan dataa.</p>";
+      });
+
+    // Tulostusfunktio
+    function tulosta(data) {
+      let teksti = "";
+      for(var i = 0; i < data.presets.length; i++) {
+        teksti = teksti + "<img src=https://weathercam.digitraffic.fi/" + data.presets[i].id + ".jpg alt='kuva' class='responsiivinen-kuva'><br>";
+      }
+
+      document.getElementById("vastaus").innerHTML = teksti;
+    }
+
+    // Navin responsiivisuus
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+  </script>
+</body>
+</html>
