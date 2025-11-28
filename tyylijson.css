@@ -71,3 +71,15 @@ body {
 h3 {
   color: #0066cc;
 }
+/* Keskitetään kaikki otsikot ja kappaletekstit */
+h1, h2, h3, p {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Voit halutessasi rajoittaa maksimileveyttä, ettei teksti veny liian leveäksi */
+p {
+  max-width: 800px;
+  line-height: 1.5;
+}
